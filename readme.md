@@ -95,52 +95,21 @@ main = do
 
 ## Notación de Cálculo Lambda
 
-### Función promedio
 ```
-promedio = λxs. (realToFrac (sum xs)) / (genericLength xs)
+promedio = λxs. realToFrac (sum xs) / genericLength xs
+
+main = λ(). putStrLn "Ingrese una lista de números separados por espacios:" >>
+           getLine >>= λentrada.
+           (λnumeros. if null numeros 
+                     then putStrLn "La lista está vacía, no se puede calcular el promedio."
+                     else putStrLn ("El promedio es: " ++ show (promedio numeros))
+           ) (map read (words entrada))
 ```
 
-### Función main completa
-```
-main = λ().
-    putStrLn "Ingrese una lista de números separados por espacios:" >>
-    getLine >>= λentrada.
-    (λnumeros.
-        if null numeros
-        then putStrLn "La lista está vacía, no se puede calcular el promedio."
-        else putStrLn ("El promedio es: " ++ show (promedio numeros))
-    ) (map read (words entrada))
-```
+## Explicación de la Notación
 
-### Descomposición por componentes
-
-**Conversión de entrada:**
-```
-λentrada. map read (words entrada) :: [Double]
-```
-
-**Validación de lista vacía:**
-```
-λnumeros. if null numeros then mensaje_error else calculo_promedio
-```
-
-**Cálculo del promedio:**
-```
-λxs. (λsuma. λlongitud. suma / longitud) (realToFrac (sum xs)) (genericLength xs)
-```
-
-**Función completa expandida:**
-```
-promedio = λxs. (λs. λl. s / l) (realToFrac (sum xs)) (genericLength xs)
-
-main = λ(). 
-    putStrLn "Ingrese una lista de números separados por espacios:" >>
-    getLine >>= λentrada.
-    (λnumeros. 
-        (λcondicion. 
-            if condicion 
-            then putStrLn "La lista está vacía, no se puede calcular el promedio."
-            else putStrLn ("El promedio es: " ++ show ((λxs. (realToFrac (sum xs)) / (genericLength xs)) numeros))
-        ) (null numeros)
-    ) ((λstr. map read (words str)) entrada)
-```
+La notación lambda convierte cada función en una expresión anónima:
+- `promedio xs = ...` se convierte en `promedio = λxs. ...`
+- El `do` de Haskell se traduce usando `>>=` para encadenar operaciones monádicas
+- `let numeros = ...` se transforma en una aplicación directa `(λnumeros. ...) (expresión)`
+- Cada variable capturada se convierte en un parámetro lambda explícito
